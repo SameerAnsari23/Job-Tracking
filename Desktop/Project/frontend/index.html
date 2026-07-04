@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="JobNotify — automated job discovery across every source." />
+    <title>JobNotify</title>
+    <script>
+      // Pre-paint theme resolution (Phase 16.5 §1.1) — prevents theme flash.
+      // Reads the persisted uiStore snapshot; falls back to system preference.
+      (function () {
+        var mode = 'system';
+        try {
+          var raw = localStorage.getItem('jobnotify-ui');
+          if (raw) {
+            var parsed = JSON.parse(raw);
+            if (parsed && parsed.state && parsed.state.themeMode) mode = parsed.state.themeMode;
+          }
+        } catch (e) {
+          /* ignore — default to system */
+        }
+        var dark =
+          mode === 'dark' ||
+          (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+      })();
+    </script>
+    <style>
+      /* App background before first React paint — matches bg-app tokens. */
+      html[data-theme='light'] body {
+        background-color: #f7f7fc;
+      }
+      html[data-theme='dark'] body {
+        background-color: #0a0a10;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
